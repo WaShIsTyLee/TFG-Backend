@@ -51,7 +51,7 @@ public class UsuarioController {
         // Verificar si el usuario existe
         Usuario usuarioExistente = usuarioService.getUserById(usuario.getId_usuario());
         if (usuarioExistente == null) {
-            throw new RecordNotFoundException("No se ha encontrado el usuario con ID: ", usuario.getId_usuario());
+            throw new RecordNotFoundException("No se ha encontrado el usuario con ID: ", usuario.getId_usuario().toString());
         }
 
         // Actualizar los campos del usuario
