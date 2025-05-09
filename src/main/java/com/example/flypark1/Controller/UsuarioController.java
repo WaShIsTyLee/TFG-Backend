@@ -58,6 +58,7 @@ public class UsuarioController {
         usuarioExistente.setName(usuario.getName());
         usuarioExistente.setEmail(usuario.getEmail());
         usuarioExistente.setPhone(usuario.getPhone());
+        usuarioExistente.setPassword(usuario.getPassword());
         usuarioExistente.setFoto(usuario.getFoto());  // Si la foto es parte de los datos
 
         // Guardar el usuario actualizado
