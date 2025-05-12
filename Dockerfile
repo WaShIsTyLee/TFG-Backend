@@ -1,11 +1,10 @@
-FROM ubuntu:latest AS build
-RUN apt-get update
-RUN apt-get install openjdk-21-jdk -y
+FROM maven:3.9.3-eclipse-temurin-17 AS builder
+WORKDIR /app
 COPY . .
-RUN ./gradlew bootJar --no-daemon
+RUN mvn clean package -DskipTests
 
-FROM openjdk:21-jdk-slim
+FROM eclipse-temurin:17
+WORKDIR /app
+COPY --from=builder /app/target/*.jar app.jar
 EXPOSE 8080
-COPY --from=build /build/libs/how-much-pay-api-0.0.1.jar app.jar
-
 ENTRYPOINT ["java", "-jar", "app.jar"]
