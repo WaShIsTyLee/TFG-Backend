@@ -1,11 +1,11 @@
-# Usa una imagen ligera de Java 17 (ideal para Spring Boot)
-FROM openjdk:17-jdk-slim
+FROM ubuntu:latest AS build
+RUN apt-get update
+RUN apt-get install openjdk-21-jdk -y
+COPY . .
+RUN ./gradlew bootJar --no-daemon
 
-# Define una variable que representa tu archivo JAR
-ARG JAR_FILE=target/*.jar
+FROM openjdk:21-jdk-slim
+EXPOSE 8080
+COPY --from=build /build/libs/how-much-pay-api-0.0.1.jar app.jar
 
-# Copia el JAR desde tu máquina al contenedor
-COPY ${JAR_FILE} app.jar
-
-# Comando que ejecuta la app
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
