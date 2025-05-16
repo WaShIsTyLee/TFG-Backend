@@ -17,6 +17,17 @@ public class Plaza {
     @Column(name = "numero_plaza")
     private String numeroPlaza;
 
+    @Column(name = "precio_por_hora")
+    private double precioPorHora;
+
+    public double getPrecioPorHora() {
+        return precioPorHora;
+    }
+
+    public void setPrecioPorHora(double precioPorHora) {
+        this.precioPorHora = precioPorHora;
+    }
+
     public Plaza() {
     }
 

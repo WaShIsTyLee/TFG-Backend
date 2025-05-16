@@ -16,7 +16,11 @@ public class ReservaService {
     private ReservaRepository reservaRepository;
 
     // Crear una nueva reserva de plaza de parking
-    public Reserva crearReserva(Reserva reserva) {
+    public Reserva crearReservaPlaza(Reserva reserva) {
+        return reservaRepository.save(reserva);
+    }
+
+    public Reserva crearReservaTaxi(Reserva reserva) {
         return reservaRepository.save(reserva);
     }
 

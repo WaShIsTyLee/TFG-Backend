@@ -23,6 +23,15 @@ public class UsuarioController {
         Usuario nuevoUsuario = usuarioService.saveUsuario(usuario);
         return ResponseEntity.status(201).body(nuevoUsuario);
     }
+    @CrossOrigin
+    @GetMapping("/getById/{id}")
+    public ResponseEntity<Usuario> getUserById(@PathVariable int id) {
+        Usuario usuario = usuarioService.getUserById(id);
+        if (usuario == null) {
+            throw new RecordNotFoundException("No se ha encontrado el usuario con ID: ", id);
+        }
+        return ResponseEntity.ok(usuario);
+    }
 
     @CrossOrigin
     @GetMapping("/email/{email}")
@@ -59,6 +68,7 @@ public class UsuarioController {
         usuarioExistente.setEmail(usuario.getEmail());
         usuarioExistente.setPhone(usuario.getPhone());
         usuarioExistente.setPassword(usuario.getPassword());
+        usuarioExistente.setMonedero(usuario.getMonedero());
         usuarioExistente.setFoto(usuario.getFoto());  // Si la foto es parte de los datos
 
         // Guardar el usuario actualizado

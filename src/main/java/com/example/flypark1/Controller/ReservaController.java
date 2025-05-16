@@ -2,15 +2,19 @@ package com.example.flypark1.Controller;
 
 import com.example.flypark1.Model.Plaza;
 import com.example.flypark1.Model.Reserva;
+import com.example.flypark1.Model.Usuario;
 import com.example.flypark1.Service.PlazaService;
 import com.example.flypark1.Service.ReservaService;
+import com.example.flypark1.Service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @RestController
@@ -21,6 +25,8 @@ public class ReservaController {
     private ReservaService reservaService;
     @Autowired
     private PlazaService plazaService;
+    @Autowired
+    private UsuarioService usuarioService;
 
     @CrossOrigin
     @PostMapping("/reservar")
@@ -43,9 +49,45 @@ public class ReservaController {
                 return new ResponseEntity<>("Ya existe una reserva activa con esta matrícula.", HttpStatus.CONFLICT);
             }
 
-            Reserva nuevaReserva = reservaService.crearReserva(reserva);
+            // 1. Calcular duración en horas (redondeado hacia arriba)
+            long horas = ChronoUnit.HOURS.between(fechaEntrada, fechaSalida);
+            if (fechaEntrada.plusHours(horas).isBefore(fechaSalida)) {
+                horas++; // Redondear hacia arriba si hay minutos adicionales
+            }
+
+            // 2. Calcular el costo
+            double costo = horas * 0.20;
+
+            // 3. Obtener el usuario
+            Usuario usuario = usuarioService.getUserById(reserva.getIdUsuario());
+            if (usuario == null) {
+                return new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
+            }
+
+            // 4. Verificar que tenga saldo suficiente
+            if (usuario.getMonedero() < costo) {
+                return new ResponseEntity<>("Saldo insuficiente en el monedero", HttpStatus.BAD_REQUEST);
+            }
+
+            // 5. Restar el monto
+            usuario.setMonedero(usuario.getMonedero() - costo);
+            usuarioService.updateUsuario(usuario); // Asegúrate de que este método actualice el usuario en la base de datos
+
+            // 6. Crear la reserva
+            Reserva nuevaReserva = reservaService.crearReservaPlaza(reserva);
             return new ResponseEntity<>(nuevaReserva, HttpStatus.CREATED);
 
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error al crear la reserva: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin
+    @PostMapping("/reservarTaxi")
+    public ResponseEntity<?> crearReservaTaxi(@RequestBody Reserva reserva) {
+        try {
+            Reserva nuevaReserva = reservaService.crearReservaTaxi(reserva);
+            return new ResponseEntity<>(nuevaReserva, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>("Error al crear la reserva: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -108,12 +150,32 @@ public class ReservaController {
         if (reserva == null) {
             return ResponseEntity.notFound().build();
         }
-        Plaza plaza = plazaService.findPlazaById(reserva.getIdPlaza());
+
+        // Obtener usuario
+        Usuario usuario = usuarioService.getUserById(reserva.getIdUsuario());
+        if (usuario == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+        // Calcular horas de la reserva
+        LocalDateTime entrada = reserva.getDiaEntrada();
+        LocalDateTime salida = reserva.getDiaSalida();
+        long horas = Duration.between(entrada, salida).toHours();
+        if (horas == 0) {
+            horas = 1; // mínimo 1 hora
+        }
+
+        double cantidadADevolver = horas * 0.20;
+        usuario.setMonedero(usuario.getMonedero() + cantidadADevolver);
+        usuarioService.updateUsuario(usuario); // Asegúrate de que esto guarda los cambios
+
+        // Eliminar la reserva
         boolean eliminado = reservaService.eliminarReserva(id);
         if (eliminado) {
             return ResponseEntity.noContent().build();
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 }

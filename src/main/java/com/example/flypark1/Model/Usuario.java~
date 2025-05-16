@@ -21,16 +21,6 @@ public class Usuario {
     @Column(name = "contraseña")
     private String password;
 
-    @Column (name = "monedero")
-    private double monedero;
-
-    public double getMonedero() {
-        return monedero;
-    }
-
-    public void setMonedero(double monedero) {
-        this.monedero = monedero;
-    }
 
     @Lob
     @Column(name = "foto", columnDefinition = "LONGTEXT")

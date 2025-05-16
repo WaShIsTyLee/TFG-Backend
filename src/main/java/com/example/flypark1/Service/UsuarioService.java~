@@ -21,7 +21,7 @@ public class UsuarioService {
         }
         return null;
     }
-
+    
     public Usuario updateUsuario(Usuario usuario) {
         return repository.save(usuario);
     }

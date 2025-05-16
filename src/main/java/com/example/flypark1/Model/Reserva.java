@@ -33,6 +33,18 @@ public class Reserva {
     @JoinColumn(name = "idParking", insertable = false, updatable = false)
     private Parking parking;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_taxi", insertable = false, updatable = false)
+    private Taxi taxi;
+
+    public Taxi getTaxi() {
+        return taxi;
+    }
+
+    public void setTaxi(Taxi taxi) {
+        this.taxi = taxi;
+    }
+
     // Constructores
     public Reserva() {
     }
@@ -44,6 +56,13 @@ public class Reserva {
         this.diaEntrada = diaEntrada;
         this.diaSalida = diaSalida;
         this.matricula = matricula;
+    }
+
+    public Reserva(Integer idReserva, Integer idUsuario, String matricula, Taxi taxi) {
+        this.idReserva = idReserva;
+        this.idUsuario = idUsuario;
+        this.matricula = matricula;
+        this.taxi = taxi;
     }
 
     // Getters y Setters
