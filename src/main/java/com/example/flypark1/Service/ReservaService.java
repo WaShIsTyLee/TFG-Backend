@@ -15,7 +15,6 @@ public class ReservaService {
     @Autowired
     private ReservaRepository reservaRepository;
 
-    // Crear una nueva reserva de plaza de parking
     public Reserva crearReservaPlaza(Reserva reserva) {
         return reservaRepository.save(reserva);
     }
@@ -24,12 +23,11 @@ public class ReservaService {
         return reservaRepository.save(reserva);
     }
 
-    // Buscar una reserva por ID
     public Reserva obtenerReservaPorId(Integer id) {
         return reservaRepository.findById(id).orElse(null);
     }
 
-    // Eliminar una reserva por ID
+
     public boolean eliminarReserva(Integer id) {
         if (reservaRepository.existsById(id)) {
             reservaRepository.deleteById(id);
@@ -45,7 +43,7 @@ public class ReservaService {
         return reservaRepository.findPlazasDisponiblesEnRango(idParking, startDate, endDate);
     }
     public List<Reserva> getReservasActivas(Integer idUsuario) {
-        LocalDateTime hoy = LocalDateTime.now();  // Obtienes la fecha y hora actuales
+        LocalDateTime hoy = LocalDateTime.now();
         return reservaRepository.findReservasActivas(idUsuario, hoy);
     }
     public boolean existeReservaActivaConMatricula(Integer idUsuario, String matricula) {

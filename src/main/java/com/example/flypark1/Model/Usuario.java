@@ -2,39 +2,39 @@ package com.example.flypark1.Model;
 
 import jakarta.persistence.*;
 
-@Entity
-@Table(name = "usuarios")
-public class Usuario {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id_usuario;
+    @Entity
+    @Table(name = "usuarios")
+    public class Usuario {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int id_usuario;
 
-    @Column(name = "nombre")
-    private String name;
+        @Column(name = "nombre")
+        private String name;
 
-    @Column(name = "email")
-    private String email;
+        @Column(name = "email")
+        private String email;
 
-    @Column(name = "telefono")
-    private String phone;
+        @Column(name = "telefono")
+        private String phone;
 
-    @Column(name = "contraseña")
-    private String password;
+        @Column(name = "contraseña")
+        private String password;
 
-    @Column (name = "monedero")
-    private double monedero;
+        @Column (name = "monedero")
+        private double monedero;
 
-    public double getMonedero() {
-        return monedero;
-    }
+        public double getMonedero() {
+            return monedero;
+        }
 
-    public void setMonedero(double monedero) {
-        this.monedero = monedero;
-    }
+        public void setMonedero(double monedero) {
+            this.monedero = monedero;
+        }
 
-    @Lob
-    @Column(name = "foto", columnDefinition = "LONGTEXT")
-    private String foto; // Aquí se almacenará la imagen codificada en base64
+        @Lob
+        @Column(name = "foto", columnDefinition = "LONGTEXT")
+        private String foto;
 
     public Usuario(int id_usuario, String name, String email, String phone, String password, String foto) {
         this.id_usuario = id_usuario;

@@ -49,31 +49,28 @@ public class ReservaController {
                 return new ResponseEntity<>("Ya existe una reserva activa con esta matrícula.", HttpStatus.CONFLICT);
             }
 
-            // 1. Calcular duración en horas (redondeado hacia arriba)
             long horas = ChronoUnit.HOURS.between(fechaEntrada, fechaSalida);
             if (fechaEntrada.plusHours(horas).isBefore(fechaSalida)) {
-                horas++; // Redondear hacia arriba si hay minutos adicionales
+                horas++;
             }
 
-            // 2. Calcular el costo
             double costo = horas * 0.20;
 
-            // 3. Obtener el usuario
+
             Usuario usuario = usuarioService.getUserById(reserva.getIdUsuario());
             if (usuario == null) {
                 return new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
             }
 
-            // 4. Verificar que tenga saldo suficiente
+
             if (usuario.getMonedero() < costo) {
                 return new ResponseEntity<>("Saldo insuficiente en el monedero", HttpStatus.BAD_REQUEST);
             }
 
-            // 5. Restar el monto
-            usuario.setMonedero(usuario.getMonedero() - costo);
-            usuarioService.updateUsuario(usuario); // Asegúrate de que este método actualice el usuario en la base de datos
 
-            // 6. Crear la reserva
+            usuario.setMonedero(usuario.getMonedero() - costo);
+            usuarioService.updateUsuario(usuario);
+
             Reserva nuevaReserva = reservaService.crearReservaPlaza(reserva);
             return new ResponseEntity<>(nuevaReserva, HttpStatus.CREATED);
 
@@ -120,7 +117,6 @@ public class ReservaController {
         return new ResponseEntity<>(reservasActivas, HttpStatus.OK);
     }
 
-    // Obtener una reserva por ID
     @CrossOrigin
     @GetMapping("/{id}")
     public ResponseEntity<Reserva> obtenerReservaPorId(@PathVariable Integer id) {
@@ -151,25 +147,24 @@ public class ReservaController {
             return ResponseEntity.notFound().build();
         }
 
-        // Obtener usuario
+
         Usuario usuario = usuarioService.getUserById(reserva.getIdUsuario());
         if (usuario == null) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
-        // Calcular horas de la reserva
+
         LocalDateTime entrada = reserva.getDiaEntrada();
         LocalDateTime salida = reserva.getDiaSalida();
         long horas = Duration.between(entrada, salida).toHours();
         if (horas == 0) {
-            horas = 1; // mínimo 1 hora
+            horas = 1;
         }
 
         double cantidadADevolver = horas * 0.20;
         usuario.setMonedero(usuario.getMonedero() + cantidadADevolver);
-        usuarioService.updateUsuario(usuario); // Asegúrate de que esto guarda los cambios
+        usuarioService.updateUsuario(usuario);
 
-        // Eliminar la reserva
         boolean eliminado = reservaService.eliminarReserva(id);
         if (eliminado) {
             return ResponseEntity.noContent().build();

@@ -15,15 +15,14 @@ public class Parking {
     @Column(name = "ubicacion")
     private String ubicacion;
 
-    // Nuevo campo para latitud
     @Column(name = "latitud")
     private Double latitud;
 
-    // Nuevo campo para longitud
+
     @Column(name = "longitud")
     private Double longitud;
 
-    // Constructor con los nuevos campos
+
     public Parking(int idParking, String nombre, String ubicacion, Double latitud, Double longitud) {
         this.idParking = idParking;
         this.nombre = nombre;
@@ -32,12 +31,10 @@ public class Parking {
         this.longitud = longitud;
     }
 
-    // Constructor vacío
     public Parking() {
 
     }
 
-    // Getters y setters para los nuevos campos
     public Double getLatitud() {
         return latitud;
     }
@@ -54,7 +51,6 @@ public class Parking {
         this.longitud = longitud;
     }
 
-    // Otros getters y setters existentes
     public int getIdParking() {
         return idParking;
     }

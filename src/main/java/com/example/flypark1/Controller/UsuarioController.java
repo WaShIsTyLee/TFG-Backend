@@ -23,15 +23,6 @@ public class UsuarioController {
         Usuario nuevoUsuario = usuarioService.saveUsuario(usuario);
         return ResponseEntity.status(201).body(nuevoUsuario);
     }
-    @CrossOrigin
-    @GetMapping("/getById/{id}")
-    public ResponseEntity<Usuario> getUserById(@PathVariable int id) {
-        Usuario usuario = usuarioService.getUserById(id);
-        if (usuario == null) {
-            throw new RecordNotFoundException("No se ha encontrado el usuario con ID: ", id);
-        }
-        return ResponseEntity.ok(usuario);
-    }
 
     @CrossOrigin
     @GetMapping("/email/{email}")
@@ -44,6 +35,17 @@ public class UsuarioController {
     }
 
     @CrossOrigin
+    @GetMapping("/getById/{id}")
+    public ResponseEntity<Usuario> getUserById(@PathVariable int id) {
+        Usuario usuario = usuarioService.getUserById(id);
+        if (usuario == null) {
+            throw new RecordNotFoundException("No se ha encontrado el usuario con ID: ", id);
+        }
+        return ResponseEntity.ok(usuario);
+    }
+
+
+    @CrossOrigin
     @PostMapping("/login")
     public Usuario validateCredentials(@RequestBody Usuario loginRequest) {
         Usuario usuario = usuarioService.validateCredentials(loginRequest.getEmail(), loginRequest.getPassword());
@@ -53,26 +55,22 @@ public class UsuarioController {
         return null;
     }
 
-    // Nuevo endpoint para actualizar todo el perfil del usuario
     @CrossOrigin
     @PutMapping("/updatePerfil")
     public ResponseEntity<Usuario> updatePerfil(@RequestBody Usuario usuario) {
-        // Verificar si el usuario existe
         Usuario usuarioExistente = usuarioService.getUserById(usuario.getId_usuario());
         if (usuarioExistente == null) {
             throw new RecordNotFoundException("No se ha encontrado el usuario con ID: ", usuario.getId_usuario());
         }
 
-        // Actualizar los campos del usuario
         usuarioExistente.setName(usuario.getName());
         usuarioExistente.setEmail(usuario.getEmail());
         usuarioExistente.setPhone(usuario.getPhone());
         usuarioExistente.setPassword(usuario.getPassword());
         usuarioExistente.setMonedero(usuario.getMonedero());
-        usuarioExistente.setFoto(usuario.getFoto());  // Si la foto es parte de los datos
+        usuarioExistente.setFoto(usuario.getFoto());
 
-        // Guardar el usuario actualizado
         Usuario usuarioActualizado = usuarioService.saveUsuario(usuarioExistente);
-        return ResponseEntity.ok(usuarioActualizado);  // Devuelve el usuario actualizado
+        return ResponseEntity.ok(usuarioActualizado);
     }
 }

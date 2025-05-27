@@ -30,15 +30,13 @@ public class PlazaController {
         System.out.println("Fecha inicio recibida: " + fechaInicio);
         System.out.println("Fecha fin recibida: " + fechaFin);
 
-        // Eliminar el sufijo 'Z' si existe (formato ISO 8601)
+
         fechaInicio = fechaInicio.replace("Z", "");
         fechaFin = fechaFin.replace("Z", "");
 
-        // Convertir a LocalDateTime
         LocalDateTime startDate = LocalDateTime.parse(fechaInicio);
         LocalDateTime endDate = LocalDateTime.parse(fechaFin);
 
-        // Llamar al servicio sin el parámetro estado
         List<Plaza> plazas = reservaService.findPlazasDisponiblesEnRango(idParking, startDate, endDate);
         System.out.println("Plazas encontradas: " + plazas);
 

@@ -26,6 +26,10 @@ public class Taxi {
     @Column(name = "ciudad")
     private String ciudad;
 
+    public Taxi() {
+
+    }
+
     public String getCiudad() {
         return ciudad;
     }
@@ -76,4 +80,12 @@ public class Taxi {
         this.adaptado = adaptado;
     }
 
+    public Taxi(Long idTaxi, String matricula, int capacidad, String telefono, boolean adaptado, String ciudad) {
+        this.idTaxi = idTaxi;
+        this.matricula = matricula;
+        this.capacidad = capacidad;
+        this.telefono = telefono;
+        this.adaptado = adaptado;
+        this.ciudad = ciudad;
+    }
 }

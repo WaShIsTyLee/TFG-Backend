@@ -24,7 +24,6 @@ public class Reserva {
     @Column(name = "matricula")
     private String matricula;
 
-    // Relaciones con entidades Parking y Plaza
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "idPlaza", insertable = false, updatable = false)
     private Plaza plaza;
@@ -45,7 +44,6 @@ public class Reserva {
         this.taxi = taxi;
     }
 
-    // Constructores
     public Reserva() {
     }
 
@@ -65,7 +63,6 @@ public class Reserva {
         this.taxi = taxi;
     }
 
-    // Getters y Setters
     public Integer getIdReserva() {
         return idReserva;
     }
