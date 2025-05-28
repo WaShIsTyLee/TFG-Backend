@@ -12,6 +12,7 @@ public interface PlazaRepository extends JpaRepository<Plaza, Integer> {
 
     Plaza findByIdPlaza(int idPlaza);
 
+    List<Plaza> findByIdParking(int idParking);
 
 
 

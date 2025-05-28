@@ -40,7 +40,10 @@ public class PlazaService {
     public List<Plaza> findPlazasByParking(int idParking) {
         return repository.findByIdParking(idParking);
     }
-
+    public List<Reserva> findReservasActivasByIdPlaza(int idPlaza) {
+        LocalDateTime ahora = LocalDateTime.now();
+        return repository.findReservasActivasByIdPlaza(idPlaza, ahora);
+    }
 
 
 

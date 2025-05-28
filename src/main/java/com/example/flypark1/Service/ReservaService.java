@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ReservaService {
@@ -51,4 +52,30 @@ public class ReservaService {
         List<Reserva> reservas = reservaRepository.findReservasActivasPorMatricula(idUsuario, matricula, ahora);
         return !reservas.isEmpty();
     }
+    public Reserva findReservaByIdPlaza(int idPlaza) {
+        Optional<Reserva> reservaOpt = reservaRepository.findByIdPlaza(idPlaza);
+        return reservaOpt.orElse(null);
+    }
+        public boolean deleteReserva(Reserva reserva) {
+            if (reservaRepository.existsById(reserva.getIdReserva())) {
+                reservaRepository.delete(reserva);
+                return true;
+            }
+            return false;
+        }
+
+    public List<Reserva> findReservasActivasByIdPlaza(int idPlaza) {
+        LocalDateTime ahora = LocalDateTime.now();
+        return reservaRepository.findReservasActivasByIdPlaza(idPlaza, ahora);
+    }
+    public List<Reserva> findReservasInactivasByIdPlaza(int idPlaza, LocalDateTime ahora) {
+        return reservaRepository.findReservasInactivasByIdPlaza(idPlaza, ahora);
+    }
+    public List<Reserva> findAllByIdPlaza(int idPlaza) {
+        return reservaRepository.findAllByIdPlaza(idPlaza);
+    }
+
+
+
+
 }

@@ -12,6 +12,9 @@ import jakarta.persistence.*;
         @Column(name = "nombre")
         private String name;
 
+        @Column  (name ="admin")
+        private boolean admin;
+
         @Column(name = "email")
         private String email;
 
@@ -45,7 +48,15 @@ import jakarta.persistence.*;
         this.foto = foto;
     }
 
-    public Usuario() {}
+        public boolean isAdmin() {
+            return admin;
+        }
+
+        public void setAdmin(boolean admin) {
+            this.admin = admin;
+        }
+
+        public Usuario() {}
 
     public int getId_usuario() {
         return id_usuario;

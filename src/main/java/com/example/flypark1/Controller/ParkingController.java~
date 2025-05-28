@@ -1,9 +1,7 @@
     package com.example.flypark1.Controller;
 
     import com.example.flypark1.Model.Parking;
-    import com.example.flypark1.Model.Plaza;
     import com.example.flypark1.Service.ParkingService;
-    import com.example.flypark1.Service.PlazaService;
     import org.springframework.beans.factory.annotation.Autowired;
     import org.springframework.http.HttpStatus;
     import org.springframework.http.ResponseEntity;
@@ -19,8 +17,6 @@
 
         @Autowired
         private ParkingService parkingService;
-        @Autowired
-        private PlazaService p;
 
         @CrossOrigin
         @GetMapping("/parkings")
@@ -55,7 +51,7 @@
         @CrossOrigin
         @PostMapping("/plaza/create")
         public ResponseEntity<Plaza> createPlaza(@RequestBody Plaza plaza) {
-            Plaza nuevaPlaza = p.createPlaza(plaza);
+            Plaza nuevaPlaza = parkingService.createPlaza(plaza);
             return ResponseEntity.ok(nuevaPlaza);
         }
 

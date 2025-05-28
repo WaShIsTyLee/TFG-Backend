@@ -20,17 +20,9 @@ public class UsuarioController {
         if (usuarioService.existUser(usuario.getEmail())) {
             return ResponseEntity.status(400).body("El usuario ya está registrado");
         }
-
-        if (usuario.getEmail().toLowerCase().endsWith("@admin.com")) {
-            usuario.setAdmin(true);
-        } else {
-            usuario.setAdmin(false);
-        }
-
         Usuario nuevoUsuario = usuarioService.saveUsuario(usuario);
         return ResponseEntity.status(201).body(nuevoUsuario);
     }
-
 
     @CrossOrigin
     @GetMapping("/email/{email}")

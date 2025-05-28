@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Service
 public class ParkingService {
@@ -16,7 +17,23 @@ public class ParkingService {
     public ArrayList<Parking> getParkings() {
         return (ArrayList<Parking>) repository.findAll();
     }
+
     public Parking getParking(int id) {
         return repository.findById(id).get();
     }
+
+    public Parking createParking(Parking parking) {
+        return repository.save(parking);
+    }
+
+    public boolean deleteParking(int idParking) {
+        Optional<Parking> optionalParking = repository.findById(idParking);
+        if (optionalParking.isPresent()) {
+            repository.deleteById(idParking);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

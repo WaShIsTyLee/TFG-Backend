@@ -1,12 +1,18 @@
 package com.example.flypark1.Controller;
 
 import com.example.flypark1.Model.Plaza;
+import com.example.flypark1.Model.Reserva;
+import com.example.flypark1.Model.Usuario;
 import com.example.flypark1.Service.PlazaService;
 import com.example.flypark1.Service.ReservaService;
+import com.example.flypark1.Service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @RestController
@@ -17,6 +23,8 @@ public class PlazaController {
     PlazaService plazaService;
     @Autowired
     ReservaService reservaService;
+    @Autowired
+    UsuarioService usuarioService;
 
 
     @CrossOrigin
@@ -47,6 +55,52 @@ public class PlazaController {
     @GetMapping("/plaza/{idPlaza}")
     public Plaza findPlazaById(@PathVariable int idPlaza) {
         return plazaService.findPlazaById(idPlaza);
+    }
+    @CrossOrigin
+    @DeleteMapping("/delete/{idPlaza}")
+    public ResponseEntity<String> deletePlaza(@PathVariable int idPlaza) {
+        try {
+            LocalDateTime ahora = LocalDateTime.now();
+            List<Reserva> todasLasReservas = reservaService.findAllByIdPlaza(idPlaza);
+
+            for (Reserva reserva : todasLasReservas) {
+                Usuario usuario = usuarioService.getUserById(reserva.getIdUsuario());
+
+                if (usuario != null && reserva.getDiaEntrada().isAfter(ahora)) {
+                    LocalDateTime fechaEntrada = reserva.getDiaEntrada();
+                    LocalDateTime fechaSalida = reserva.getDiaSalida();
+                    long horas = ChronoUnit.HOURS.between(fechaEntrada, fechaSalida);
+                    if (fechaEntrada.plusHours(horas).isBefore(fechaSalida)) {
+                        horas++;
+                    }
+                    double costo = horas * 0.20;
+
+                    usuario.setMonedero(usuario.getMonedero() + costo);
+                    usuarioService.updateUsuario(usuario);
+                }
+
+                reservaService.deleteReserva(reserva);
+            }
+
+            boolean deleted = plazaService.deletePlaza(idPlaza);
+            if (deleted) {
+                return ResponseEntity.ok("Plaza y todas las reservas eliminadas correctamente. Dinero devuelto por reservas futuras.");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Plaza no encontrada.");
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al eliminar plaza: " + e.getMessage());
+        }
+    }
+
+
+    @CrossOrigin
+    @GetMapping("/porParking/{idParking}")
+    public List<Plaza> findPlazasByParking(@PathVariable int idParking) {
+        System.out.println("Buscando plazas para parking con ID: " + idParking);
+        return plazaService.findPlazasByParking(idParking);
     }
 
 }
