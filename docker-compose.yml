@@ -1,0 +1,29 @@
+  services:
+    mysql:
+      image: mysql:8.0
+      container_name: mysql_flypark
+      environment:
+        MYSQL_ROOT_PASSWORD: ""
+        MYSQL_DATABASE: flypark2
+      ports:
+        - "3306:3306"
+      volumes:
+        - mysql_data:/var/lib/mysql
+      networks:
+        - flypark_network
+
+    springboot:
+      build: .
+      container_name: flypark_api
+      ports:
+        - "8080:8080"
+      depends_on:
+        - mysql
+      networks:
+        - flypark_network
+
+  volumes:
+    mysql_data:
+
+  networks:
+    flypark_network:
