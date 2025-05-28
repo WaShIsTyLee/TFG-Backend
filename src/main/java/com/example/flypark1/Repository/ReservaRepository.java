@@ -38,12 +38,6 @@ public interface ReservaRepository extends JpaRepository<Reserva, Integer> {
             @Param("matricula") String matricula,
             @Param("fechaActual") LocalDateTime fechaActual
     );
-    Optional<Reserva> findByIdPlaza(int idPlaza);
-
-    @Query("SELECT r FROM Reserva r WHERE r.idPlaza = :idPlaza AND r.diaSalida <= :fechaActual")
-    List<Reserva> findReservasInactivasByIdPlaza(@Param("idPlaza") int idPlaza, @Param("fechaActual") LocalDateTime fechaActual);
-    @Query("SELECT r FROM Reserva r WHERE r.idPlaza = :idPlaza AND r.diaEntrada <= :ahora AND r.diaSalida >= :ahora")
-    List<Reserva> findReservasActivasByIdPlaza(@Param("idPlaza") int idPlaza, @Param("ahora") LocalDateTime ahora);
     @Query("SELECT r FROM Reserva r WHERE r.idPlaza = :idPlaza")
     List<Reserva> findAllByIdPlaza(@Param("idPlaza") int idPlaza);
 
