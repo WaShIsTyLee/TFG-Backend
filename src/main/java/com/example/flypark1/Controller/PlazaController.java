@@ -26,7 +26,14 @@ public class PlazaController {
     @Autowired
     UsuarioService usuarioService;
 
-
+    /**
+     * Busca plazas disponibles en un parking durante un rango de fechas.
+     *
+     * @param idParking  ID del parking.
+     * @param fechaInicio Fecha y hora de inicio del rango.
+     * @param fechaFin   Fecha y hora de fin del rango.
+     * @return Lista de plazas disponibles.
+     */
     @CrossOrigin
     @GetMapping("/plazasDisponibles")
     public List<Plaza> searchPlazasDisponibles(
@@ -37,7 +44,6 @@ public class PlazaController {
         System.out.println("ID Parking recibido en el controlador: " + idParking);
         System.out.println("Fecha inicio recibida: " + fechaInicio);
         System.out.println("Fecha fin recibida: " + fechaFin);
-
 
         fechaInicio = fechaInicio.replace("Z", "");
         fechaFin = fechaFin.replace("Z", "");
@@ -51,11 +57,25 @@ public class PlazaController {
         return plazas;
     }
 
+    /**
+     * Busca una plaza por su ID.
+     *
+     * @param idPlaza ID de la plaza.
+     * @return Objeto Plaza si se encuentra.
+     */
     @CrossOrigin
     @GetMapping("/plaza/{idPlaza}")
     public Plaza findPlazaById(@PathVariable int idPlaza) {
         return plazaService.findPlazaById(idPlaza);
     }
+
+    /**
+     * Elimina una plaza y sus reservas asociadas.
+     * Si hay reservas futuras, se devuelve el dinero al usuario.
+     *
+     * @param idPlaza ID de la plaza a eliminar.
+     * @return Mensaje indicando el resultado de la operación.
+     */
     @CrossOrigin
     @DeleteMapping("/delete/{idPlaza}")
     public ResponseEntity<String> deletePlaza(@PathVariable int idPlaza) {
@@ -95,7 +115,12 @@ public class PlazaController {
         }
     }
 
-
+    /**
+     * Busca todas las plazas asociadas a un parking específico.
+     *
+     * @param idParking ID del parking.
+     * @return Lista de plazas asociadas a ese parking.
+     */
     @CrossOrigin
     @GetMapping("/porParking/{idParking}")
     public List<Plaza> findPlazasByParking(@PathVariable int idParking) {

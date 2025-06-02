@@ -1,7 +1,9 @@
     package com.example.flypark1.Controller;
 
     import com.example.flypark1.Model.Parking;
+    import com.example.flypark1.Model.Plaza;
     import com.example.flypark1.Service.ParkingService;
+    import com.example.flypark1.Service.PlazaService;
     import org.springframework.beans.factory.annotation.Autowired;
     import org.springframework.http.HttpStatus;
     import org.springframework.http.ResponseEntity;
@@ -17,6 +19,8 @@
 
         @Autowired
         private ParkingService parkingService;
+        @Autowired
+        private PlazaService p;
 
         @CrossOrigin
         @GetMapping("/parkings")
@@ -30,6 +34,11 @@
             return parkingService.getParking(id_parking);
         }
 
+        /**
+         * Creación de un nuevo parking
+         * @param parking
+         * @return
+         */
         @CrossOrigin
         @PostMapping("/create")
         public ResponseEntity<Parking> createParking(@RequestBody Parking parking) {
@@ -37,6 +46,11 @@
             return ResponseEntity.ok(nuevoParking);
         }
 
+        /**
+         * Eliminar parking mediante el id_parking
+         * @param id_parking
+         * @return
+         */
         @CrossOrigin
         @DeleteMapping("/delete/{id}")
         public ResponseEntity<Map<String, String>> deleteParking(@PathVariable("id") int id_parking) {
@@ -48,10 +62,16 @@
                         .body(Collections.singletonMap("message", "Parking not found"));
             }
         }
+
+        /**
+         * Crear una plaza para el parking mediante el id_parking presente en Plaza
+         * @param plaza
+         * @return
+         */
         @CrossOrigin
         @PostMapping("/plaza/create")
         public ResponseEntity<Plaza> createPlaza(@RequestBody Plaza plaza) {
-            Plaza nuevaPlaza = parkingService.createPlaza(plaza);
+            Plaza nuevaPlaza = p.createPlaza(plaza);
             return ResponseEntity.ok(nuevaPlaza);
         }
 

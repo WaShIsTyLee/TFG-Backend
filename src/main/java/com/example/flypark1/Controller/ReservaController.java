@@ -28,6 +28,13 @@ public class ReservaController {
     @Autowired
     private UsuarioService usuarioService;
 
+    /**
+     * Crea una nueva reserva de plaza.
+     * Valida fechas, saldo del usuario y si ya existe una reserva con la misma matrícula.
+     *
+     * @param reserva Datos de la reserva a crear.
+     * @return Reserva creada o mensaje de error.
+     */
     @CrossOrigin
     @PostMapping("/reservar")
     public ResponseEntity<?> crearReserva(@RequestBody Reserva reserva) {
@@ -56,17 +63,14 @@ public class ReservaController {
 
             double costo = horas * 0.20;
 
-
             Usuario usuario = usuarioService.getUserById(reserva.getIdUsuario());
             if (usuario == null) {
                 return new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
             }
 
-
             if (usuario.getMonedero() < costo) {
                 return new ResponseEntity<>("Saldo insuficiente en el monedero", HttpStatus.BAD_REQUEST);
             }
-
 
             usuario.setMonedero(usuario.getMonedero() - costo);
             usuarioService.updateUsuario(usuario);
@@ -79,17 +83,16 @@ public class ReservaController {
         }
     }
 
-    @CrossOrigin
-    @PostMapping("/reservarTaxi")
-    public ResponseEntity<?> crearReservaTaxi(@RequestBody Reserva reserva) {
-        try {
-            Reserva nuevaReserva = reservaService.crearReservaTaxi(reserva);
-            return new ResponseEntity<>(nuevaReserva, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Error al crear la reserva: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 
+
+    /**
+     * Obtiene plazas disponibles en un rango de fechas para un parking.
+     *
+     * @param idParking   ID del parking.
+     * @param fechaInicio Fecha de inicio.
+     * @param fechaFin    Fecha de fin.
+     * @return Lista de plazas disponibles.
+     */
     @CrossOrigin
     @GetMapping("/plazasDisponibles")
     public List<Plaza> searchPlazasDisponibles(
@@ -110,6 +113,12 @@ public class ReservaController {
         return plazas;
     }
 
+    /**
+     * Obtiene las reservas activas de un usuario.
+     *
+     * @param idUsuario ID del usuario.
+     * @return Lista de reservas activas.
+     */
     @CrossOrigin
     @GetMapping("/activas/{idUsuario}")
     public ResponseEntity<List<Reserva>> obtenerReservasActivas(@PathVariable Integer idUsuario) {
@@ -117,6 +126,12 @@ public class ReservaController {
         return new ResponseEntity<>(reservasActivas, HttpStatus.OK);
     }
 
+    /**
+     * Obtiene una reserva por su ID.
+     *
+     * @param id ID de la reserva.
+     * @return Objeto reserva si se encuentra.
+     */
     @CrossOrigin
     @GetMapping("/{id}")
     public ResponseEntity<Reserva> obtenerReservaPorId(@PathVariable Integer id) {
@@ -128,6 +143,12 @@ public class ReservaController {
         }
     }
 
+    /**
+     * Obtiene todas las reservas de un usuario por su ID.
+     *
+     * @param id ID del usuario.
+     * @return Lista de reservas del usuario.
+     */
     @CrossOrigin
     @GetMapping("/usuario/{id}")
     public ResponseEntity<List<Reserva>> obtenerReservasPorIdUsuario(@PathVariable Integer id) {
@@ -139,6 +160,12 @@ public class ReservaController {
         }
     }
 
+    /**
+     * Elimina una reserva por su ID y devuelve el dinero al usuario.
+     *
+     * @param id ID de la reserva.
+     * @return Código de estado según resultado de la operación.
+     */
     @CrossOrigin
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarReserva(@PathVariable Integer id) {
@@ -147,12 +174,10 @@ public class ReservaController {
             return ResponseEntity.notFound().build();
         }
 
-
         Usuario usuario = usuarioService.getUserById(reserva.getIdUsuario());
         if (usuario == null) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
 
         LocalDateTime entrada = reserva.getDiaEntrada();
         LocalDateTime salida = reserva.getDiaSalida();
